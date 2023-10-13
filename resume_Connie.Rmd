@@ -1,0 +1,126 @@
+---
+title: Connie Méndez Vergara
+author: Connie Méndez
+date: "`r Sys.Date()`"
+output:
+  pagedown::html_resume:
+    css: ['css/custom_resume.css', 'css/styles.css', 'resume']
+    # set it to true for a self-contained HTML page but it'll take longer to render
+    self_contained: true
+#knit: pagedown::chrome_print
+---
+
+```{r, include=FALSE}
+knitr::opts_chunk$set(
+  results='asis', 
+  echo = FALSE
+)
+
+library(tidyverse)
+library(glue)
+library(readxl)
+library(knitr)
+
+
+# Set this to true to have links turned into footnotes at the end of the document
+PDF_EXPORT <- FALSE
+
+# Holds all the links that were inserted for placement at the end
+links <- c()
+
+source('parsing_functions.R') # Functions for building sections from CSV data
+source('common_variables.R')  # Small variables for non-csv data such as intro text
+
+# First let's get the data, filtering to only the items tagged as
+# Resume items
+position_data <- read_excel("RESUMEN_CONNIE.xlsx", sheet = "RESUMEN") %>%
+  filter(in_resume==TRUE) %>% 
+  mutate(
+    # Build some custom sections by collapsing others
+    section = case_when(
+      section %in% c('research_positions', 'industry_positions') ~ 'positions', 
+      section %in% c('data_science_writings', 'by_me_press') ~ 'writings',
+      TRUE ~ section
+    )
+  ) 
+
+```
+
+# Aside
+
+![logo](qr-code.png){width="100%"}
+
+## Contacto {#contact}
+
+-   <i class="fa fa-envelope"></i>&nbsp;&nbsp;[connie.mendez.vergara\@gmail.com](mailto:connie.mendez.vergara@gmail.com){.email}
+-   <i class="fa fa-linkedin-square"></i>&nbsp;&nbsp;[linkedin.com/in/conniemendez](https://www.linkedin.com/in/conniemendez/)
+-   <i class="fa fa-phone"></i>&nbsp;&nbsp;(+569) 94580-7215 - (+562) 2555-1089
+-   <i class="fa fa-map-marker"></i>&nbsp;&nbsp;Santiago, Chile.
+
+## Software {#skills}
+
+```{r}
+build_skill_bars(skills)
+```
+
+
+## Idiomas 
+
+```{r}
+build_skill_bars(skill2)
+```
+
+## Más Acerca de Mí {#more-info}
+
+En constante aprendizaje. <br>
+Autodidacta. <br>
+Actualmente aprendiendo acerca Inversiones tipo *value invest*, Programación en Python e Inglés.
+Siempre una sonrisa, cordialidad y buena disposición.
+
+
+## Disclaimer {#disclaimer}
+
+Hecho con la librería [**pagedown**](https://github.com/rstudio/pagedown).
+
+Código fuente: [github.com/ConnieMendez/CV](https://github.com/ConnieMendez/CV).
+
+Última actualización `r Sys.Date()`.
+
+# Main
+
+## **Connie Méndez Vergara** {#title}
+
+### Analista Económico y Programadora en software R
+
+-   Organizada, responsable, proactiva, colaborativa, aprendizaje rápido, analítica. Habilidad para trabajo autónomo o en equipo.
+-   5 años de experiencia en análisis económico coyuntural, programación estadística, optimización de procesos, trabajo con bases de datos de Registros Administrativos y encuestas, aplicación de métodos cuantitativos.
+-   Conocimientos avanzados de R, R Studio. Habilidades y conocimientos de SQL, STATA, MS Office, Pyhton (Jupyter).
+
+
+
+```{r}
+#cat(sanitize_links(intro_text))
+```
+
+
+## Formación {data-icon="graduation-cap"}
+
+```{r}
+position_data %>% print_section_2('education')
+```
+
+<br>
+
+## Experiencia {data-icon="suitcase"}
+
+```{r}
+position_data %>% print_section('positions')
+```
+<br>
+<br>
+
+## Actividades Complementarias {data-icon="laptop"}
+
+```{r}
+position_data %>% print_section('otros')
+```
